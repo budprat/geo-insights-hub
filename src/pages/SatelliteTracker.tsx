@@ -55,7 +55,6 @@ const SatelliteTracker: React.FC = () => {
                   left: `${xPos}%`,
                   backgroundColor: sat.color,
                   boxShadow: `0 0 8px ${sat.color}`,
-                  ringColor: sat.color,
                 }}
                 onClick={() => setSelectedSat(sat.id === selectedSat ? null : sat.id)}
               >
