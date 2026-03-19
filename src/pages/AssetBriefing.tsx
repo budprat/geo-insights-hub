@@ -213,6 +213,14 @@ const AssetBriefing: React.FC = () => {
           onClose={() => setPlannerAction(null)}
         />
       )}
+
+      {/* Export Panel */}
+      <ExportPanel open={exportOpen} onOpenChange={setExportOpen} assetId={asset.id} />
+          assetName={asset.name}
+          onDeploy={handleDeploy}
+          onClose={() => setPlannerAction(null)}
+        />
+      )}
     </div>
   );
 };
