@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { HealthBadge } from "@/components/HealthBadge";
 import { Sparkline } from "@/components/Sparkline";
 import { InterventionPlanner } from "@/components/InterventionPlanner";
-import { ArrowLeft, CheckCircle2, MapPin, Zap } from "lucide-react";
+import { ExportPanel } from "@/components/ExportPanel";
+import { ArrowLeft, CheckCircle2, MapPin, Zap, FileDown } from "lucide-react";
 
 const AssetBriefing: React.FC = () => {
   const { assetId } = useParams<{ assetId: string }>();
