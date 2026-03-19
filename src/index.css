@@ -110,6 +110,16 @@
     @apply font-sans font-semibold tracking-tight;
     text-wrap: balance;
   }
+
+  /* Tabular numbers for data-heavy displays */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Minimum touch targets */
+  button, a, select, [role="switch"], [role="link"] {
+    min-height: 32px;
+  }
 }
 
 @layer utilities {
