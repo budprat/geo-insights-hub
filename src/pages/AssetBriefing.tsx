@@ -28,7 +28,7 @@ const AssetBriefing: React.FC = () => {
     yoyChange: -5.3,
   };
 
-  const demoFindings: typeof assetFindings = [
+  const demoFindings: Finding[] = [
     { id: "df1", text: "Canola block B2 exhibits 18% chlorophyll decline over 21 days — likely nitrogen deficiency confirmed by Sentinel-2 Red-Edge analysis.", severity: "critical", zone: "B2-north" },
     { id: "df2", text: "Soil moisture in wheat blocks W1-W3 trending 12% below 5-year seasonal average. Subsurface probe at W2 shows water table drop of 0.4 m.", severity: "critical", zone: "W1-W3" },
     { id: "df3", text: "Early-stage fusarium risk flagged in W4 based on humidity + temperature model. Confidence: 72%.", severity: "warning", zone: "W4" },
