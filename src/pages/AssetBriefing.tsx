@@ -13,6 +13,7 @@ const AssetBriefing: React.FC = () => {
   const navigate = useNavigate();
   const [deployedActions, setDeployedActions] = useState<Set<string>>(new Set());
   const [plannerAction, setPlannerAction] = useState<RecommendedAction | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const asset = assets.find((a) => a.id === assetId);
   const assetFindings = findings[assetId || ""] || [];
