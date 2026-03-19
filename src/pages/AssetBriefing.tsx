@@ -5,13 +5,15 @@ import { Button } from "@/components/ui/button";
 import { HealthBadge } from "@/components/HealthBadge";
 import { Sparkline } from "@/components/Sparkline";
 import { InterventionPlanner } from "@/components/InterventionPlanner";
-import { ArrowLeft, CheckCircle2, MapPin, Zap } from "lucide-react";
+import { ExportPanel } from "@/components/ExportPanel";
+import { ArrowLeft, CheckCircle2, MapPin, Zap, FileDown } from "lucide-react";
 
 const AssetBriefing: React.FC = () => {
   const { assetId } = useParams<{ assetId: string }>();
   const navigate = useNavigate();
   const [deployedActions, setDeployedActions] = useState<Set<string>>(new Set());
   const [plannerAction, setPlannerAction] = useState<RecommendedAction | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
   const asset = assets.find((a) => a.id === assetId);
   const assetFindings = findings[assetId || ""] || [];
@@ -49,6 +51,10 @@ const AssetBriefing: React.FC = () => {
             {asset.region} · {asset.crop} · {asset.sizeHA.toLocaleString()} HA
           </span>
         </div>
+        <Button variant="outline" size="sm" className="ml-auto" onClick={() => setExportOpen(true)}>
+          <FileDown className="w-3.5 h-3.5 mr-1.5" />
+          Export
+        </Button>
       </div>
 
       {/* Three Column Grid */}
@@ -207,6 +213,9 @@ const AssetBriefing: React.FC = () => {
           onClose={() => setPlannerAction(null)}
         />
       )}
+
+      {/* Export Panel */}
+      <ExportPanel open={exportOpen} onOpenChange={setExportOpen} assetId={asset.id} />
     </div>
   );
 };
