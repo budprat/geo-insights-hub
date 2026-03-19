@@ -135,6 +135,38 @@ const AssetBriefing: React.FC = () => {
         ? "Declining"
         : "Critical";
 
+  // Enhancement #2: 30-Day Trend and Confidence calculations
+  const trendDelta =
+    asset.trend.length >= 2
+      ? ((asset.trend[asset.trend.length - 1] - asset.trend[0]) /
+          asset.trend[0]) *
+        100
+      : 0;
+
+  const confidence =
+    asset.healthScore < 50
+      ? "94% (High)"
+      : asset.healthScore < 70
+        ? "87% (Med)"
+        : "92% (High)";
+
+  // Enhancement #1: Asset ID generation
+  const assetIdDisplay = `${asset.id.toUpperCase().slice(0, 2)}-${Math.abs(asset.id.charCodeAt(0) * 100 + asset.id.charCodeAt(1))}`;
+
+  const statusBadgeLabel =
+    asset.healthScore < 50
+      ? "CRITICAL"
+      : asset.healthScore < 70
+        ? "DECLINING"
+        : "STABLE";
+
+  const statusBadgeClass =
+    asset.healthScore < 50
+      ? "bg-status-critical/10 text-status-critical"
+      : asset.healthScore < 70
+        ? "bg-status-warn/10 text-status-warn"
+        : "bg-status-good/10 text-status-good";
+
   return (
     <div className="h-full flex flex-col screen-enter">
       {/* Header */}
@@ -147,20 +179,40 @@ const AssetBriefing: React.FC = () => {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-lg font-semibold">{asset.name}</h1>
+          {/* Enhancement #1: Asset ID + Status Badge */}
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-[10px] uppercase text-muted-foreground tracking-wider">
+              Asset ID: {assetIdDisplay}
+            </span>
+            <span
+              className={`px-2 py-0.5 text-[10px] font-mono font-bold rounded-sm ${statusBadgeClass}`}
+            >
+              STATUS: {statusBadgeLabel}
+            </span>
+          </div>
+          <h1 className="text-2xl font-semibold">{asset.name}</h1>
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
             {asset.region} · {asset.crop} · {asset.sizeHA.toLocaleString()} HA
           </span>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto"
-          onClick={() => setExportOpen(true)}
-        >
-          <FileDown className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
-          Export
-        </Button>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setExportOpen(true)}
+          >
+            <FileDown className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
+            Export
+          </Button>
+          {/* Enhancement #8: Share Briefing Button */}
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            Share Briefing
+          </Button>
+        </div>
       </div>
 
       {/* Three Column Grid */}
@@ -187,6 +239,27 @@ const AssetBriefing: React.FC = () => {
                 Status: {statusLabel}
               </span>
               <Sparkline data={asset.trend} width={80} height={24} />
+            </div>
+
+            {/* Enhancement #2: 30-Day Trend + Confidence */}
+            <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 gap-4">
+              <div>
+                <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                  30-Day Trend
+                </span>
+                <p
+                  className={`font-mono text-sm font-bold mt-1 ${trendDelta < 0 ? "text-status-critical" : "text-status-good"}`}
+                >
+                  {trendDelta > 0 ? "+" : ""}
+                  {trendDelta.toFixed(1)}%
+                </p>
+              </div>
+              <div>
+                <span className="font-mono text-[10px] uppercase text-muted-foreground">
+                  Confidence
+                </span>
+                <p className="font-mono text-sm font-bold mt-1">{confidence}</p>
+              </div>
             </div>
           </div>
 
@@ -227,11 +300,12 @@ const AssetBriefing: React.FC = () => {
                       ? "border-status-warn"
                       : "border-border";
                 return (
+                  // Enhancement #5: Finding Hover States
                   <div
                     key={finding.id}
-                    className={`border-l-2 ${borderColor} pl-4 py-1`}
+                    className={`group border-l-2 ${borderColor} pl-4 py-1 hover:bg-accent/50 transition-colors cursor-pointer`}
                   >
-                    <p className="text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed group-hover:text-foreground">
                       <span className="font-mono text-xs text-muted-foreground mr-2">
                         {i + 1}.
                       </span>
@@ -257,56 +331,94 @@ const AssetBriefing: React.FC = () => {
           <div className="mt-4 space-y-3">
             {assetActions.map((action) => {
               const isDeployed = deployedActions.has(action.id);
+
+              // Enhancement #3: Accent bar color
+              const accentBarColor =
+                action.priority === "urgent"
+                  ? "bg-status-critical"
+                  : action.priority === "high"
+                    ? "bg-status-warn"
+                    : "bg-border";
+
+              // Enhancement #4: ROI Priority badge
+              const priorityBadgeLabel =
+                action.priority === "urgent"
+                  ? "IMMEDIATE ROI"
+                  : action.priority === "high"
+                    ? "HIGH PRIORITY"
+                    : "SCHEDULED";
+
+              const priorityBadgeClass =
+                action.priority === "urgent"
+                  ? "bg-status-critical/10 text-status-critical"
+                  : action.priority === "high"
+                    ? "bg-status-warn/10 text-status-warn"
+                    : "bg-accent text-muted-foreground";
+
               return (
                 <div
                   key={action.id}
-                  className="border border-border p-4 card-hover"
+                  className="border border-border relative overflow-hidden card-hover"
                 >
-                  <div className="flex items-start gap-2 mb-2">
-                    {action.priority === "urgent" && (
-                      <Zap
-                        className="w-4 h-4 text-status-critical flex-shrink-0 mt-0.5"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium leading-snug">
-                        {action.title}
-                      </p>
-                      <p className="font-mono text-xs text-muted-foreground mt-1">
-                        <MapPin
-                          className="w-3 h-3 inline mr-1"
+                  {/* Enhancement #3: Colored Accent Bar */}
+                  <div
+                    className={`absolute top-0 left-0 w-1 h-full ${accentBarColor}`}
+                  />
+                  <div className="p-4 pl-5">
+                    <div className="flex items-start gap-2 mb-2">
+                      {action.priority === "urgent" && (
+                        <Zap
+                          className="w-4 h-4 text-status-critical flex-shrink-0 mt-0.5"
                           aria-hidden="true"
                         />
-                        {action.target}
-                      </p>
+                      )}
+                      <div className="flex-1">
+                        <p className="text-sm font-medium leading-snug">
+                          {action.title}
+                        </p>
+                        <p className="font-mono text-xs text-muted-foreground mt-1">
+                          <MapPin
+                            className="w-3 h-3 inline mr-1"
+                            aria-hidden="true"
+                          />
+                          {action.target}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="font-mono text-sm font-medium">
-                      Est. ${action.estimatedCost.toLocaleString()}
-                    </span>
-                    {isDeployed ? (
-                      <Button
-                        variant="success"
-                        className="h-9 w-auto px-4"
-                        disabled
+                    {/* Enhancement #4: ROI Priority Badge row */}
+                    <div className="flex items-center justify-between mt-2 mb-2">
+                      <span
+                        className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-sm ${priorityBadgeClass}`}
                       >
-                        <CheckCircle2
-                          className="w-4 h-4 mr-1"
-                          aria-hidden="true"
-                        />
-                        Deployed
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="action"
-                        className="h-9 w-auto px-4"
-                        onClick={() => setPlannerAction(action)}
-                      >
-                        Approve Intervention
-                      </Button>
-                    )}
+                        {priorityBadgeLabel}
+                      </span>
+                      <span className="font-mono text-sm font-medium">
+                        Est. ${action.estimatedCost.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-end mt-2">
+                      {isDeployed ? (
+                        <Button
+                          variant="success"
+                          className="h-9 w-auto px-4"
+                          disabled
+                        >
+                          <CheckCircle2
+                            className="w-4 h-4 mr-1"
+                            aria-hidden="true"
+                          />
+                          Deployed
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="action"
+                          className="h-9 w-auto px-4"
+                          onClick={() => setPlannerAction(action)}
+                        >
+                          Approve Intervention
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -397,6 +509,32 @@ const AssetBriefing: React.FC = () => {
                   },
                 ]}
               />
+
+              {/* Enhancement #6a: LIVE TELEMETRY badge */}
+              <div className="absolute top-4 left-4 bg-background/90 border border-border px-3 py-2 z-[1001] backdrop-blur-sm">
+                <div className="flex items-center gap-2 font-mono text-[10px] font-bold">
+                  <span className="w-2 h-2 rounded-full bg-status-good animate-pulse" />
+                  LIVE TELEMETRY
+                </div>
+                <div className="font-mono text-[9px] text-muted-foreground mt-0.5">
+                  UPDATE: 12 MINS AGO
+                </div>
+              </div>
+
+              {/* Enhancement #6b: NDVI gradient bar */}
+              <div className="absolute bottom-4 left-4 bg-background/90 border border-border px-3 py-2 z-[1001] backdrop-blur-sm flex items-center gap-3">
+                <span className="font-mono text-[10px] font-bold">
+                  LAYER: NDVI
+                </span>
+                <div
+                  className="w-20 h-2 rounded-sm"
+                  style={{
+                    background:
+                      "linear-gradient(to right, hsl(var(--status-critical)), hsl(var(--status-warn)), hsl(var(--status-good)))",
+                  }}
+                />
+              </div>
+
               {/* Legend */}
               <div className="absolute top-4 right-4 bg-background border border-border p-3 z-[1001]">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-2">

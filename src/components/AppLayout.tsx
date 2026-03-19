@@ -16,6 +16,7 @@ import {
   Zap,
   Moon,
   Sun,
+  Search,
 } from "lucide-react";
 import {
   AlertSubscriptions,
@@ -91,6 +92,20 @@ const AppLayout: React.FC = () => {
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1">
             Geospatial Intelligence
           </span>
+        </div>
+
+        {/* Enhancement #7: Search Bar */}
+        <div className="hidden md:flex items-center mr-3">
+          <div className="flex items-stretch h-8 border border-border rounded-sm overflow-hidden">
+            <div className="flex items-center justify-center px-2 bg-card text-muted-foreground">
+              <Search className="w-3.5 h-3.5" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search assets, coords..."
+              className="bg-card text-sm px-2 w-40 focus:w-56 transition-all focus:outline-none placeholder:text-muted-foreground"
+            />
+          </div>
         </div>
 
         {/* Operations group */}
