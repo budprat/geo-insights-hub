@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { assets, findings, recommendedActions, type RecommendedAction } from "@/lib/mock-data";
+import { assets, findings, recommendedActions, type RecommendedAction, type Finding } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { HealthBadge } from "@/components/HealthBadge";
 import { Sparkline } from "@/components/Sparkline";
