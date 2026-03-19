@@ -15,6 +15,7 @@ import CommunityChallenges from "@/pages/CommunityChallenges";
 import InsightMarketplace from "@/pages/InsightMarketplace";
 import LiveMonitoring from "@/pages/LiveMonitoring";
 import SatelliteTracker from "@/pages/SatelliteTracker";
+import InterventionPlannerPage from "@/pages/InterventionPlannerPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,10 @@ const App = () => (
               <Route path="/marketplace" element={<InsightMarketplace />} />
               <Route path="/monitoring" element={<LiveMonitoring />} />
               <Route path="/satellites" element={<SatelliteTracker />} />
+              <Route
+                path="/interventions"
+                element={<InterventionPlannerPage />}
+              />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
