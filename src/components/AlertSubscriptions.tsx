@@ -185,7 +185,12 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="alerts-title"
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]"
@@ -196,17 +201,23 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
       <div className="relative bg-background border border-border w-full max-w-[600px] mx-4 max-h-[90vh] flex flex-col z-10">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-border flex-shrink-0">
-          <h2 className="text-xl font-semibold">Alert Subscriptions</h2>
+          <h2 id="alerts-title" className="text-xl font-semibold">
+            Alert Subscriptions
+          </h2>
           <button
             onClick={() => onOpenChange(false)}
             className="hover:bg-accent p-1.5 rounded-sm transition-colors"
+            aria-label="Close"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div
+          className="p-6 overflow-y-auto flex-1"
+          style={{ overscrollBehavior: "contain" }}
+        >
           {/* New Alert Rule Form */}
           <div className="bg-card border border-border p-4 mb-6">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
@@ -216,10 +227,14 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
             <div className="space-y-3 mt-3">
               {/* Asset Select */}
               <div>
-                <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
+                <label
+                  htmlFor="alert-asset"
+                  className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium"
+                >
                   Assets
                 </label>
                 <select
+                  id="alert-asset"
                   value={assetVal}
                   onChange={(e) => setAssetVal(e.target.value)}
                   className="w-full h-10 border border-border px-3 text-sm bg-background rounded-sm focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
@@ -235,10 +250,14 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
 
               {/* Metric */}
               <div>
-                <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
+                <label
+                  htmlFor="alert-metric"
+                  className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium"
+                >
                   Metric
                 </label>
                 <select
+                  id="alert-metric"
                   value={metric}
                   onChange={(e) => setMetric(e.target.value)}
                   className="w-full h-10 border border-border px-3 text-sm bg-background rounded-sm focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
@@ -253,10 +272,14 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
               {/* Condition + Threshold */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
+                  <label
+                    htmlFor="alert-condition"
+                    className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium"
+                  >
                     Condition
                   </label>
                   <select
+                    id="alert-condition"
                     value={condition}
                     onChange={(e) => setCondition(e.target.value)}
                     className="w-full h-10 border border-border px-3 text-sm bg-background rounded-sm focus:outline-none focus:ring-1 focus:ring-ring cursor-pointer"
@@ -267,10 +290,14 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
+                  <label
+                    htmlFor="alert-threshold"
+                    className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium"
+                  >
                     Threshold
                   </label>
                   <input
+                    id="alert-threshold"
                     type="number"
                     value={threshold}
                     min={0}
@@ -283,28 +310,40 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
 
               {/* Channels */}
               <div>
-                <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground block mb-1.5 font-medium">
                   Notify Via
-                </label>
+                </span>
                 <div className="flex gap-4">
-                  <label className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <label
+                    htmlFor="alert-ch-email"
+                    className="flex items-center gap-1.5 text-sm cursor-pointer"
+                  >
                     <input
+                      id="alert-ch-email"
                       type="checkbox"
                       checked={chEmail}
                       onChange={(e) => setChEmail(e.target.checked)}
                     />
                     Email
                   </label>
-                  <label className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <label
+                    htmlFor="alert-ch-sms"
+                    className="flex items-center gap-1.5 text-sm cursor-pointer"
+                  >
                     <input
+                      id="alert-ch-sms"
                       type="checkbox"
                       checked={chSms}
                       onChange={(e) => setChSms(e.target.checked)}
                     />
                     SMS
                   </label>
-                  <label className="flex items-center gap-1.5 text-sm cursor-pointer">
+                  <label
+                    htmlFor="alert-ch-slack"
+                    className="flex items-center gap-1.5 text-sm cursor-pointer"
+                  >
                     <input
+                      id="alert-ch-slack"
                       type="checkbox"
                       checked={chSlack}
                       onChange={(e) => setChSlack(e.target.checked)}
@@ -352,7 +391,17 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
                   >
                     <div
                       className={`toggle-switch ${s.active ? "active" : ""}`}
+                      role="switch"
+                      aria-checked={s.active}
+                      aria-label={s.assetName}
+                      tabIndex={0}
                       onClick={() => handleToggle(s.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleToggle(s.id);
+                        }
+                      }}
                     />
                     <div className="flex-1 min-w-0">
                       <div
@@ -371,16 +420,16 @@ export const AlertSubscriptions: React.FC<AlertSubscriptionsProps> = ({
                     <button
                       onClick={() => handleEdit(s.id)}
                       className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                      title="Edit"
+                      aria-label="Edit"
                     >
-                      <Pencil className="w-4 h-4" />
+                      <Pencil className="w-4 h-4" aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => handleDelete(s.id)}
                       className="text-muted-foreground hover:text-status-critical transition-colors flex-shrink-0"
-                      title="Delete"
+                      aria-label="Delete"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 ))

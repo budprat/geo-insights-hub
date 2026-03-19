@@ -104,7 +104,10 @@ const ROICalculator: React.FC = () => {
       {/* Left: Inputs */}
       <div className="w-80 border-r border-border bg-card flex-shrink-0 overflow-auto p-6">
         <div className="flex items-center gap-2 mb-6">
-          <Calculator className="w-4 h-4 text-muted-foreground" />
+          <Calculator
+            className="w-4 h-4 text-muted-foreground"
+            aria-hidden="true"
+          />
           <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
             ROI Parameters
           </span>
@@ -197,7 +200,10 @@ const ROICalculator: React.FC = () => {
 
         {/* Scenario Modeling Section */}
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="w-4 h-4 text-muted-foreground" />
+          <TrendingUp
+            className="w-4 h-4 text-muted-foreground"
+            aria-hidden="true"
+          />
           <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
             Scenario Modeling
           </span>
@@ -311,7 +317,10 @@ const ROICalculator: React.FC = () => {
         {/* Metric Cards */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           <div className="border border-border p-4 hover-lift">
-            <DollarSign className="w-4 h-4 text-muted-foreground mb-2" />
+            <DollarSign
+              className="w-4 h-4 text-muted-foreground mb-2"
+              aria-hidden="true"
+            />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Total Cost
             </span>
@@ -320,7 +329,10 @@ const ROICalculator: React.FC = () => {
             </span>
           </div>
           <div className="border border-border p-4 hover-lift">
-            <TrendingUp className="w-4 h-4 text-muted-foreground mb-2" />
+            <TrendingUp
+              className="w-4 h-4 text-muted-foreground mb-2"
+              aria-hidden="true"
+            />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Recovery
             </span>
@@ -329,7 +341,10 @@ const ROICalculator: React.FC = () => {
             </span>
           </div>
           <div className="border border-border p-4 hover-lift">
-            <DollarSign className="w-4 h-4 text-muted-foreground mb-2" />
+            <DollarSign
+              className="w-4 h-4 text-muted-foreground mb-2"
+              aria-hidden="true"
+            />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Net Benefit
             </span>
@@ -340,7 +355,10 @@ const ROICalculator: React.FC = () => {
             </span>
           </div>
           <div className="border border-border p-4 hover-lift">
-            <Clock className="w-4 h-4 text-muted-foreground mb-2" />
+            <Clock
+              className="w-4 h-4 text-muted-foreground mb-2"
+              aria-hidden="true"
+            />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Payback
             </span>

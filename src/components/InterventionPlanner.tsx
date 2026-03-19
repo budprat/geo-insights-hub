@@ -50,7 +50,9 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
   const handleDeploy = () => {
     const budgetNum = parseFloat(budget);
     if (budgetNum > 5000) {
-      setError("Exceeds remaining Q3 maintenance budget.");
+      setError(
+        "Exceeds remaining Q3 maintenance budget. Reduce to $5,000 or less.",
+      );
       return;
     }
     setError("");
@@ -62,7 +64,12 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="intervention-title"
+    >
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-foreground/50 backdrop-blur-[2px]"
@@ -73,17 +80,20 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
       <div className="relative bg-background border border-border w-full max-w-[600px] z-10">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-border">
-          <h2 className="text-xl font-semibold">Deploy Intervention</h2>
+          <h2 id="intervention-title" className="text-xl font-semibold">
+            Deploy Intervention
+          </h2>
           <button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground text-xl leading-none w-6 h-6 flex items-center justify-center"
+            aria-label="Close"
           >
             &times;
           </button>
         </div>
 
         {/* Body */}
-        <div className="p-6">
+        <div className="p-6" style={{ overscrollBehavior: "contain" }}>
           {/* Intervention Summary */}
           <div className="bg-card border border-border p-4 mb-6">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
@@ -135,6 +145,7 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
                 </span>
                 <input
                   type="text"
+                  inputMode="decimal"
                   value={budget}
                   onChange={(e) => {
                     setBudget(e.target.value);
@@ -161,7 +172,7 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
                       !date && "text-muted-foreground",
                     )}
                   >
-                    <CalendarIcon className="w-4 h-4" />
+                    <CalendarIcon className="w-4 h-4" aria-hidden="true" />
                     {date ? format(date, "PPP") : "Select deadline..."}
                   </button>
                 </PopoverTrigger>
@@ -203,7 +214,10 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
           >
             {deploying ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                <Loader2
+                  className="w-4 h-4 animate-spin mr-2"
+                  aria-hidden="true"
+                />
                 Deploying...
               </>
             ) : (

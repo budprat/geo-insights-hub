@@ -64,6 +64,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans font-semibold tracking-tight;
+    text-wrap: balance;
   }
 }
 
@@ -98,6 +99,17 @@
   .border-status-critical {
     border-color: hsl(var(--status-critical));
   }
+}
+
+/* Focus visible rings for interactive elements */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+[role="switch"]:focus-visible,
+[role="link"]:focus-visible,
+input[type="range"]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
 }
 
 /* Leaflet overrides */
@@ -198,7 +210,7 @@
 
 /* Smooth transitions */
 .transition-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Table row hover */

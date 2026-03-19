@@ -77,6 +77,7 @@ const EvidenceExplorer: React.FC = () => {
         <button
           onClick={() => navigate(`/asset/${asset.id}`)}
           className="hover:bg-accent p-1.5 rounded-sm transition-colors"
+          aria-label="Go back"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -221,16 +222,21 @@ const EvidenceExplorer: React.FC = () => {
 
       {/* Timeline Slider */}
       <div className="border-t border-border px-6 py-3 bg-background flex items-center gap-4">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground w-20">
+        <label
+          htmlFor="timeline-slider"
+          className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground w-20"
+        >
           Timeline
-        </span>
+        </label>
         <input
+          id="timeline-slider"
           type="range"
           min="0"
           max="11"
           value={timelineValue}
           onChange={(e) => setTimelineValue(parseInt(e.target.value))}
           className="flex-1 h-0.5 bg-border appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:cursor-pointer"
+          aria-label="Timeline"
         />
         <span className="font-mono text-xs text-muted-foreground w-28 text-right">
           {SLIDER_DATES[timelineValue]}

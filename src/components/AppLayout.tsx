@@ -82,7 +82,7 @@ const AppLayout: React.FC = () => {
       {/* Top Navigation */}
       <header className="h-12 border-b border-border bg-background flex items-center px-6 flex-shrink-0">
         <div className="flex items-center gap-2 mr-6">
-          <Satellite className="w-4 h-4" />
+          <Satellite className="w-4 h-4" aria-hidden="true" />
           <span className="font-semibold text-sm tracking-tight">JonaAI</span>
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1">
             Geospatial Intelligence
@@ -104,7 +104,7 @@ const AppLayout: React.FC = () => {
                     : "hover:bg-accent text-muted-foreground"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                 {item.label}
               </button>
             );
@@ -128,7 +128,7 @@ const AppLayout: React.FC = () => {
                     : "hover:bg-accent text-muted-foreground"
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                 {item.label}
               </button>
             );
@@ -138,7 +138,7 @@ const AppLayout: React.FC = () => {
         {/* Breadcrumb for detail pages */}
         {location.pathname.startsWith("/asset") && (
           <span className="ml-2 px-2.5 py-1.5 text-xs bg-accent rounded-sm flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5" />
+            <Activity className="w-3.5 h-3.5" aria-hidden="true" />
             Asset Briefing
           </span>
         )}
@@ -162,8 +162,9 @@ const AppLayout: React.FC = () => {
             onClick={() => navigate("/workflows")}
             className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 font-mono text-[10px] border border-border px-2.5 py-1 hover:border-primary"
             title="Workflow Builder"
+            aria-label="Run Workflow"
           >
-            <Zap className="w-3.5 h-3.5" />
+            <Zap className="w-3.5 h-3.5" aria-hidden="true" />
             <span className="hidden sm:inline uppercase tracking-wider">
               Run
             </span>
@@ -173,9 +174,12 @@ const AppLayout: React.FC = () => {
           <button
             onClick={() => setAlertsOpen(true)}
             className="relative hover:bg-accent p-1.5 rounded-sm transition-colors"
-            title="Alert Subscriptions"
+            aria-label="Alert Subscriptions"
           >
-            <Bell className="w-4 h-4 text-muted-foreground" />
+            <Bell
+              className="w-4 h-4 text-muted-foreground"
+              aria-hidden="true"
+            />
             {alertCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-status-critical text-white text-[9px] font-mono font-medium rounded-full flex items-center justify-center">
                 {alertCount}

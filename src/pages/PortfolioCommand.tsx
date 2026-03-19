@@ -63,7 +63,10 @@ const PortfolioCommand: React.FC = () => {
       {/* Sidebar Filters */}
       <aside className="w-60 border-r border-border bg-card flex-shrink-0 p-4">
         <div className="flex items-center gap-2 mb-6">
-          <Filter className="w-4 h-4 text-muted-foreground" />
+          <Filter
+            className="w-4 h-4 text-muted-foreground"
+            aria-hidden="true"
+          />
           <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
             Filters
           </span>
@@ -114,7 +117,10 @@ const PortfolioCommand: React.FC = () => {
         {criticalCount > 0 && !bannerDismissed && (
           <div className="bg-status-critical text-primary-foreground px-6 py-2.5 flex items-center justify-between text-sm font-medium">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <AlertTriangle
+                className="w-4 h-4 flex-shrink-0"
+                aria-hidden="true"
+              />
               <span>
                 CRITICAL: {criticalCount} asset{criticalCount > 1 ? "s" : ""} at
                 risk across Northern sectors. Estimated exposure:{" "}
@@ -133,8 +139,9 @@ const PortfolioCommand: React.FC = () => {
               <button
                 onClick={() => setBannerDismissed(true)}
                 className="text-white/70 hover:text-white ml-2"
+                aria-label="Dismiss alert"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -155,7 +162,7 @@ const PortfolioCommand: React.FC = () => {
                   /100
                 </span>
                 <span className="flex items-center gap-1 font-mono text-sm text-status-critical">
-                  <ArrowDownRight className="w-3 h-3" />
+                  <ArrowDownRight className="w-3 h-3" aria-hidden="true" />
                   2.4% YoY
                 </span>
               </div>
@@ -208,7 +215,10 @@ const PortfolioCommand: React.FC = () => {
           <div className="px-6 py-4">
             <div className="border border-border p-6 bg-card">
               <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-status-critical flex-shrink-0" />
+                <AlertTriangle
+                  className="w-5 h-5 text-status-critical flex-shrink-0"
+                  aria-hidden="true"
+                />
                 <div>
                   <div className="text-sm font-medium">
                     Telemetry sync failed.
@@ -286,6 +296,14 @@ const PortfolioCommand: React.FC = () => {
                   <tr
                     key={asset.id}
                     onClick={() => navigate(`/asset/${asset.id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        navigate(`/asset/${asset.id}`);
+                      }
+                    }}
+                    tabIndex={0}
+                    role="link"
                     className="border-b border-border cursor-pointer row-hover animate-fade-in-up"
                     style={{
                       animationDelay: `${0.05 * filtered.indexOf(asset)}s`,
@@ -317,9 +335,15 @@ const PortfolioCommand: React.FC = () => {
                         className={`font-mono text-sm flex items-center justify-end gap-1 ${asset.yoyChange >= 0 ? "text-status-good" : "text-status-critical"}`}
                       >
                         {asset.yoyChange >= 0 ? (
-                          <ArrowUpRight className="w-3 h-3" />
+                          <ArrowUpRight
+                            className="w-3 h-3"
+                            aria-hidden="true"
+                          />
                         ) : (
-                          <ArrowDownRight className="w-3 h-3" />
+                          <ArrowDownRight
+                            className="w-3 h-3"
+                            aria-hidden="true"
+                          />
                         )}
                         {Math.abs(asset.yoyChange)}%
                       </span>

@@ -142,6 +142,7 @@ const AssetBriefing: React.FC = () => {
         <button
           onClick={() => navigate("/")}
           className="hover:bg-accent p-1.5 rounded-sm transition-colors"
+          aria-label="Go back"
         >
           <ArrowLeft className="w-4 h-4" />
         </button>
@@ -157,7 +158,7 @@ const AssetBriefing: React.FC = () => {
           className="ml-auto"
           onClick={() => setExportOpen(true)}
         >
-          <FileDown className="w-3.5 h-3.5 mr-1.5" />
+          <FileDown className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
           Export
         </Button>
       </div>
@@ -263,14 +264,20 @@ const AssetBriefing: React.FC = () => {
                 >
                   <div className="flex items-start gap-2 mb-2">
                     {action.priority === "urgent" && (
-                      <Zap className="w-4 h-4 text-status-critical flex-shrink-0 mt-0.5" />
+                      <Zap
+                        className="w-4 h-4 text-status-critical flex-shrink-0 mt-0.5"
+                        aria-hidden="true"
+                      />
                     )}
                     <div className="flex-1">
                       <p className="text-sm font-medium leading-snug">
                         {action.title}
                       </p>
                       <p className="font-mono text-xs text-muted-foreground mt-1">
-                        <MapPin className="w-3 h-3 inline mr-1" />
+                        <MapPin
+                          className="w-3 h-3 inline mr-1"
+                          aria-hidden="true"
+                        />
                         {action.target}
                       </p>
                     </div>
@@ -285,7 +292,10 @@ const AssetBriefing: React.FC = () => {
                         className="h-9 w-auto px-4"
                         disabled
                       >
-                        <CheckCircle2 className="w-4 h-4 mr-1" />
+                        <CheckCircle2
+                          className="w-4 h-4 mr-1"
+                          aria-hidden="true"
+                        />
                         Deployed
                       </Button>
                     ) : (
