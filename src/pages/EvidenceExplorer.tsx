@@ -43,6 +43,8 @@ const EvidenceExplorer: React.FC = () => {
     lng: number;
     ndvi: number;
     moisture: number;
+    surfaceTemp: number;
+    histogram: number[];
   } | null>(null);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [watchOpen, setWatchOpen] = useState(false);
@@ -67,7 +69,15 @@ const EvidenceExplorer: React.FC = () => {
 
   const handleMouseMove = useCallback(
     (lat: number, lng: number, ndvi: number, moisture: number) => {
-      setPixelData({ lat, lng, ndvi, moisture });
+      const surfaceTemp = 22 + Math.abs(Math.sin(lat * 50)) * 12;
+      // Generate 9-bar spectral histogram from position
+      const histogram = Array.from(
+        { length: 9 },
+        (_, i) =>
+          Math.abs(Math.sin((lat * 100 + i * 30) * (lng * 80 + i * 20))) * 0.8 +
+          0.2,
+      );
+      setPixelData({ lat, lng, ndvi, moisture, surfaceTemp, histogram });
     },
     [],
   );
@@ -137,6 +147,12 @@ const EvidenceExplorer: React.FC = () => {
                 }
               >
                 {pixelData ? pixelData.ndvi.toFixed(2) : "\u2014"}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <span className="text-muted-foreground uppercase">TEMP:</span>
+              <span>
+                {pixelData ? `${pixelData.surfaceTemp.toFixed(1)}° C` : "—"}
               </span>
             </div>
             <div className="flex gap-2">
@@ -225,6 +241,32 @@ const EvidenceExplorer: React.FC = () => {
                   <span className="text-right">
                     {pixelData ? `${pixelData.moisture.toFixed(0)}%` : "\u2014"}
                   </span>
+                  <span className="text-muted-foreground">Temp</span>
+                  <span className="text-right">
+                    {pixelData ? `${pixelData.surfaceTemp.toFixed(1)}° C` : "—"}
+                  </span>
+                </div>
+
+                {/* Spectral Histogram */}
+                <div
+                  className="mt-3 h-10 w-full bg-muted/50 flex items-end gap-px p-1 overflow-hidden"
+                  aria-label="Spectral distribution"
+                >
+                  {(pixelData?.histogram || Array(9).fill(0.1)).map((v, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 transition-all duration-150"
+                      style={{
+                        height: `${v * 100}%`,
+                        backgroundColor:
+                          i < 5
+                            ? `hsl(var(--status-good) / ${0.3 + v * 0.5})`
+                            : i < 7
+                              ? `hsl(var(--status-critical) / ${0.3 + v * 0.5})`
+                              : `hsl(var(--muted-foreground) / 0.3)`,
+                      }}
+                    />
+                  ))}
                 </div>
               </div>
 
