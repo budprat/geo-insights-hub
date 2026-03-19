@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useTheme } from "next-themes";
 import {
   BarChart3,
   Satellite,
@@ -13,6 +14,8 @@ import {
   Orbit,
   Bell,
   Zap,
+  Moon,
+  Sun,
 } from "lucide-react";
 import {
   AlertSubscriptions,
@@ -62,6 +65,7 @@ const navItems: NavItem[] = [
 const AppLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [alertCount, setAlertCount] = useState(getAlertCount);
 
@@ -168,6 +172,25 @@ const AppLayout: React.FC = () => {
             <span className="hidden sm:inline uppercase tracking-wider">
               Run
             </span>
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="hover:bg-accent p-1.5 rounded-sm transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {theme === "dark" ? (
+              <Sun
+                className="w-4 h-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+            ) : (
+              <Moon
+                className="w-4 h-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+            )}
           </button>
 
           {/* Alert Bell */}
