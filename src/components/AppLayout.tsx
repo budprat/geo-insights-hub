@@ -93,12 +93,9 @@ const AppLayout: React.FC = () => {
     <div className="h-screen flex flex-col overflow-hidden">
       {/* Top Navigation */}
       <header className="h-12 border-b border-border bg-background flex items-center px-6 flex-shrink-0">
-        <div className="flex items-center gap-2 mr-6">
+        <div className="flex items-center gap-2 mr-4">
           <Satellite className="w-4 h-4" aria-hidden="true" />
           <span className="font-semibold text-sm tracking-tight">JonaAI</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1">
-            Geospatial Intelligence
-          </span>
         </div>
 
         {/* Enhancement #7: Search Bar */}
