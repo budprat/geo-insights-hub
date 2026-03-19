@@ -17,7 +17,6 @@ import {
   Zap,
   Moon,
   Sun,
-  Search,
 } from "lucide-react";
 import {
   AlertSubscriptions,
@@ -98,21 +97,7 @@ const AppLayout: React.FC = () => {
           <span className="font-semibold text-sm tracking-tight">JonaAI</span>
         </div>
 
-        {/* Enhancement #7: Search Bar */}
-        <div className="hidden md:flex items-center mr-3">
-          <div className="flex items-stretch h-8 border border-border rounded-sm overflow-hidden">
-            <div className="flex items-center justify-center px-2 bg-card text-muted-foreground">
-              <Search className="w-3.5 h-3.5" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search assets, coords..."
-              className="bg-card text-sm px-2 w-40 focus:w-56 transition-all focus:outline-none placeholder:text-muted-foreground"
-            />
-          </div>
-        </div>
-
-        {/* Operations group */}
+        {/* Operations group — full labels */}
         <nav className="flex items-center gap-0.5">
           {operations.map((item) => {
             const Icon = item.icon;
@@ -121,7 +106,7 @@ const AppLayout: React.FC = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`px-2.5 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1.5 ${
+                className={`px-2 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1 ${
                   active
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-accent text-muted-foreground"
@@ -134,9 +119,9 @@ const AppLayout: React.FC = () => {
           })}
         </nav>
 
-        <div className="w-px h-4 bg-border mx-2" />
+        <div className="w-px h-4 bg-border mx-1.5" />
 
-        {/* Tools group */}
+        {/* Tools group — icon-only with tooltips */}
         <nav className="flex items-center gap-0.5">
           {tools.map((item) => {
             const Icon = item.icon;
@@ -145,14 +130,15 @@ const AppLayout: React.FC = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`px-2.5 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1.5 ${
+                title={item.label}
+                aria-label={item.label}
+                className={`p-1.5 rounded-sm transition-colors ${
                   active
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-accent text-muted-foreground"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                {item.label}
               </button>
             );
           })}
