@@ -136,7 +136,7 @@ const AssetBriefing: React.FC = () => {
         : "Critical";
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col screen-enter">
       {/* Header */}
       <div className="border-b border-border px-6 py-4 flex items-center gap-4">
         <button
@@ -190,7 +190,7 @@ const AssetBriefing: React.FC = () => {
           </div>
 
           {/* Yield Impact + Simulate ROI */}
-          <div className="border border-border p-4 mb-8 bg-card">
+          <div className="border border-border p-4 mb-8 bg-card hover-lift">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
               Est. Yield Impact
             </span>
@@ -257,7 +257,10 @@ const AssetBriefing: React.FC = () => {
             {assetActions.map((action) => {
               const isDeployed = deployedActions.has(action.id);
               return (
-                <div key={action.id} className="border border-border p-4">
+                <div
+                  key={action.id}
+                  className="border border-border p-4 card-hover"
+                >
                   <div className="flex items-start gap-2 mb-2">
                     {action.priority === "urgent" && (
                       <Zap className="w-4 h-4 text-status-critical flex-shrink-0 mt-0.5" />

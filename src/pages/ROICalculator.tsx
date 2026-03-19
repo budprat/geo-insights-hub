@@ -310,7 +310,7 @@ const ROICalculator: React.FC = () => {
 
         {/* Metric Cards */}
         <div className="grid grid-cols-4 gap-4 mb-8">
-          <div className="border border-border p-4">
+          <div className="border border-border p-4 hover-lift">
             <DollarSign className="w-4 h-4 text-muted-foreground mb-2" />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Total Cost
@@ -319,7 +319,7 @@ const ROICalculator: React.FC = () => {
               ${result.totalCost.toLocaleString()}
             </span>
           </div>
-          <div className="border border-border p-4">
+          <div className="border border-border p-4 hover-lift">
             <TrendingUp className="w-4 h-4 text-muted-foreground mb-2" />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Recovery
@@ -328,7 +328,7 @@ const ROICalculator: React.FC = () => {
               ${result.projectedRecovery.toLocaleString()}
             </span>
           </div>
-          <div className="border border-border p-4">
+          <div className="border border-border p-4 hover-lift">
             <DollarSign className="w-4 h-4 text-muted-foreground mb-2" />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Net Benefit
@@ -339,7 +339,7 @@ const ROICalculator: React.FC = () => {
               ${result.netBenefit.toLocaleString()}
             </span>
           </div>
-          <div className="border border-border p-4">
+          <div className="border border-border p-4 hover-lift">
             <Clock className="w-4 h-4 text-muted-foreground mb-2" />
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block">
               Payback

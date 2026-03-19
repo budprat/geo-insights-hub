@@ -97,7 +97,7 @@ const EvidenceExplorer: React.FC = () => {
 
         {/* Technical Panel (matches JonaAI-Intel) */}
         <div
-          className="absolute top-4 right-4 w-80 bg-background border border-border z-[1001] max-h-[calc(100%-6rem)] overflow-auto"
+          className="absolute top-4 right-4 w-80 bg-background border border-border z-[1001] max-h-[calc(100%-6rem)] overflow-auto animate-fade-in"
           style={{ boxShadow: "2px 2px 0 rgba(0,0,0,0.06)" }}
         >
           {/* Panel header */}

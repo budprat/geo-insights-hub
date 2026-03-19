@@ -109,7 +109,7 @@ const PortfolioCommand: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto screen-enter">
         {/* Critical Alert Banner */}
         {criticalCount > 0 && !bannerDismissed && (
           <div className="bg-status-critical text-primary-foreground px-6 py-2.5 flex items-center justify-between text-sm font-medium">
@@ -286,7 +286,10 @@ const PortfolioCommand: React.FC = () => {
                   <tr
                     key={asset.id}
                     onClick={() => navigate(`/asset/${asset.id}`)}
-                    className="border-b border-border cursor-pointer hover:bg-accent/50 transition-colors"
+                    className="border-b border-border cursor-pointer row-hover animate-fade-in-up"
+                    style={{
+                      animationDelay: `${0.05 * filtered.indexOf(asset)}s`,
+                    }}
                   >
                     <td className="py-3 pr-4">
                       <span className="text-sm font-medium">{asset.name}</span>
