@@ -409,13 +409,23 @@ const AssetBriefing: React.FC = () => {
                           />
                           Deployed
                         </Button>
-                      ) : (
+                      ) : action.priority === "urgent" ? (
                         <Button
                           variant="action"
                           className="h-9 w-auto px-4"
                           onClick={() => setPlannerAction(action)}
                         >
-                          Approve Intervention
+                          Approve & Deploy
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          className="h-9 w-auto px-4"
+                          onClick={() => setPlannerAction(action)}
+                        >
+                          {action.priority === "high"
+                            ? "Schedule Scan"
+                            : "Schedule"}
                         </Button>
                       )}
                     </div>
