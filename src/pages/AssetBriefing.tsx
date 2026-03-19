@@ -15,17 +15,37 @@ const AssetBriefing: React.FC = () => {
   const [plannerAction, setPlannerAction] = useState<RecommendedAction | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
 
-  const asset = assets.find((a) => a.id === assetId);
-  const assetFindings = findings[assetId || ""] || [];
-  const assetActions = recommendedActions[assetId || ""] || [];
+  const demoAsset: typeof assets[0] = {
+    id: "demo",
+    name: "Cascadia Demonstration Farm",
+    region: "Pacific Northwest",
+    crop: "Wheat / Canola Rotation",
+    sizeHA: 1850,
+    healthScore: 64,
+    status: "watch",
+    pendingActions: 4,
+    trend: [78, 77, 75, 74, 72, 71, 70, 69, 68, 67, 66, 66, 65, 65, 64, 64, 64, 63, 63, 64, 64, 65, 64, 64, 64, 64, 63, 64, 64, 64],
+    yoyChange: -5.3,
+  };
 
-  if (!asset) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Asset not found.</p>
-      </div>
-    );
-  }
+  const demoFindings: typeof assetFindings = [
+    { id: "df1", text: "Canola block B2 exhibits 18% chlorophyll decline over 21 days — likely nitrogen deficiency confirmed by Sentinel-2 Red-Edge analysis.", severity: "critical", zone: "B2-north" },
+    { id: "df2", text: "Soil moisture in wheat blocks W1-W3 trending 12% below 5-year seasonal average. Subsurface probe at W2 shows water table drop of 0.4 m.", severity: "critical", zone: "W1-W3" },
+    { id: "df3", text: "Early-stage fusarium risk flagged in W4 based on humidity + temperature model. Confidence: 72%.", severity: "warning", zone: "W4" },
+    { id: "df4", text: "Cover crop establishment in fallow block F1 progressing normally. Biomass accumulation on track (+8% vs. plan).", severity: "info", zone: "F1" },
+    { id: "df5", text: "Drone survey on Oct 15 detected 3 irrigation pivot misalignment events in B1. Auto-correction applied.", severity: "warning", zone: "B1" },
+  ];
+
+  const demoActions: RecommendedAction[] = [
+    { id: "da1", title: "Apply variable-rate nitrogen (46-0-0) to canola block B2 at 35 kg/HA", target: "Block B2, Northern Sector", estimatedCost: 4200, priority: "urgent", deployed: false },
+    { id: "da2", title: "Activate supplemental irrigation wells for wheat blocks W1-W3", target: "Wells 7, 9, 12 — Wheat Zone", estimatedCost: 1800, priority: "urgent", deployed: false },
+    { id: "da3", title: "Schedule preventive fungicide application (Prosaro) for W4", target: "Block W4, Full Coverage", estimatedCost: 3100, priority: "high", deployed: false },
+    { id: "da4", title: "Recalibrate pivot alignment sensors on Block B1 system", target: "Pivot #3, Block B1", estimatedCost: 650, priority: "medium", deployed: false },
+  ];
+
+  const asset = assets.find((a) => a.id === assetId) || demoAsset;
+  const assetFindings = findings[assetId || ""] || (assetId && assets.find(a => a.id === assetId) ? [] : demoFindings);
+  const assetActions = recommendedActions[assetId || ""] || (assetId && assets.find(a => a.id === assetId) ? [] : demoActions);
 
   const handleDeploy = (actionId: string) => {
     setDeployedActions((prev) => new Set(prev).add(actionId));

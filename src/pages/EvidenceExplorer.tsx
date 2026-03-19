@@ -20,15 +20,20 @@ const EvidenceExplorer: React.FC = () => {
   const [timelineValue, setTimelineValue] = useState(85);
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
 
-  const asset = assets.find((a) => a.id === assetId);
+  const demoAsset: typeof assets[0] = {
+    id: "demo",
+    name: "Cascadia Demonstration Farm",
+    region: "Pacific Northwest",
+    crop: "Wheat / Canola Rotation",
+    sizeHA: 1850,
+    healthScore: 64,
+    status: "watch",
+    pendingActions: 4,
+    trend: [78, 77, 75, 74, 72, 71, 70, 69, 68, 67, 66, 66, 65, 65, 64, 64, 64, 63, 63, 64, 64, 65, 64, 64, 64, 64, 63, 64, 64, 64],
+    yoyChange: -5.3,
+  };
 
-  if (!asset) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted-foreground">Asset not found.</p>
-      </div>
-    );
-  }
+  const asset = assets.find((a) => a.id === assetId) || demoAsset;
 
   const timelineDate = new Date(2023, 6, 1);
   timelineDate.setDate(timelineDate.getDate() + Math.floor((timelineValue / 100) * 120));
