@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { assets, findings, recommendedActions } from "@/lib/mock-data";
+import { assets, getAssetFindings, getAssetActions } from "@/lib/mock-data";
 import { generateGeoJSON, generateCSV, downloadFile } from "@/lib/export-utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FileDown, FileJson, FileText, Loader2 } from "lucide-react";
@@ -13,15 +19,19 @@ interface ExportPanelProps {
   assetId: string;
 }
 
-export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, assetId }) => {
+export const ExportPanel: React.FC<ExportPanelProps> = ({
+  open,
+  onOpenChange,
+  assetId,
+}) => {
   const [format, setFormat] = useState<"pdf" | "geojson" | "csv">("pdf");
   const [includeFindings, setIncludeFindings] = useState(true);
   const [includeActions, setIncludeActions] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const asset = assets.find((a) => a.id === assetId);
-  const assetFindings = findings[assetId] || [];
-  const assetActions = recommendedActions[assetId] || [];
+  const assetFindings = getAssetFindings(assetId);
+  const assetActions = getAssetActions(assetId);
 
   if (!asset) return null;
 
@@ -33,9 +43,17 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
 
     if (format === "geojson") {
       const geojson = generateGeoJSON(asset);
-      downloadFile(geojson, `${asset.id}-export.geojson`, "application/geo+json");
+      downloadFile(
+        geojson,
+        `${asset.id}-export.geojson`,
+        "application/geo+json",
+      );
     } else if (format === "csv") {
-      const csv = generateCSV(asset, includeFindings ? assetFindings : [], includeActions ? assetActions : []);
+      const csv = generateCSV(
+        asset,
+        includeFindings ? assetFindings : [],
+        includeActions ? assetActions : [],
+      );
       downloadFile(csv, `${asset.id}-report.csv`, "text/csv");
     } else {
       // PDF: generate a simple text-based report
@@ -63,7 +81,9 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
         lines.push("-".repeat(30));
         assetActions.forEach((a, i) => {
           lines.push(`${i + 1}. ${a.title}`);
-          lines.push(`   Target: ${a.target} | Est. Cost: $${a.estimatedCost} | Priority: ${a.priority}`);
+          lines.push(
+            `   Target: ${a.target} | Est. Cost: $${a.estimatedCost} | Priority: ${a.priority}`,
+          );
         });
       }
 
@@ -76,9 +96,24 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
   };
 
   const formats = [
-    { id: "pdf" as const, label: "PDF Report", icon: FileText, desc: "Executive summary document" },
-    { id: "geojson" as const, label: "GeoJSON", icon: FileJson, desc: "Geospatial data with boundaries" },
-    { id: "csv" as const, label: "CSV", icon: FileDown, desc: "Tabular data export" },
+    {
+      id: "pdf" as const,
+      label: "PDF Report",
+      icon: FileText,
+      desc: "Executive summary document",
+    },
+    {
+      id: "geojson" as const,
+      label: "GeoJSON",
+      icon: FileJson,
+      desc: "Geospatial data with boundaries",
+    },
+    {
+      id: "csv" as const,
+      label: "CSV",
+      icon: FileDown,
+      desc: "Tabular data export",
+    },
   ];
 
   return (
@@ -86,13 +121,17 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
       <SheetContent className="w-96">
         <SheetHeader>
           <SheetTitle>Export Report</SheetTitle>
-          <SheetDescription>{asset.name} — {asset.region}</SheetDescription>
+          <SheetDescription>
+            {asset.name} — {asset.region}
+          </SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-6">
           {/* Format Selection */}
           <div>
-            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-3">Format</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-3">
+              Format
+            </span>
             <div className="space-y-2">
               {formats.map((f) => {
                 const Icon = f.icon;
@@ -101,13 +140,19 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
                     key={f.id}
                     onClick={() => setFormat(f.id)}
                     className={`w-full text-left px-3 py-2.5 border rounded-sm flex items-center gap-3 transition-colors ${
-                      format === f.id ? "border-primary bg-accent" : "border-border hover:bg-accent/50"
+                      format === f.id
+                        ? "border-primary bg-accent"
+                        : "border-border hover:bg-accent/50"
                     }`}
                   >
                     <Icon className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <span className="text-sm font-medium block">{f.label}</span>
-                      <span className="text-xs text-muted-foreground">{f.desc}</span>
+                      <span className="text-sm font-medium block">
+                        {f.label}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {f.desc}
+                      </span>
                     </div>
                   </button>
                 );
@@ -117,15 +162,27 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({ open, onOpenChange, as
 
           {/* Content Options */}
           <div>
-            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-3">Include</span>
+            <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground block mb-3">
+              Include
+            </span>
             <div className="space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
-                <Checkbox checked={includeFindings} onCheckedChange={(c) => setIncludeFindings(!!c)} />
-                <span className="text-sm">Executive Findings ({assetFindings.length})</span>
+                <Checkbox
+                  checked={includeFindings}
+                  onCheckedChange={(c) => setIncludeFindings(!!c)}
+                />
+                <span className="text-sm">
+                  Executive Findings ({assetFindings.length})
+                </span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
-                <Checkbox checked={includeActions} onCheckedChange={(c) => setIncludeActions(!!c)} />
-                <span className="text-sm">Recommended Actions ({assetActions.length})</span>
+                <Checkbox
+                  checked={includeActions}
+                  onCheckedChange={(c) => setIncludeActions(!!c)}
+                />
+                <span className="text-sm">
+                  Recommended Actions ({assetActions.length})
+                </span>
               </label>
             </div>
           </div>

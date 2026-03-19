@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  BarChart3, Satellite, Activity, GitBranch, Calculator,
-  FlaskConical, Users, Store, Radio, Orbit,
+  BarChart3,
+  Satellite,
+  Activity,
+  GitBranch,
+  Calculator,
+  FlaskConical,
+  Users,
+  Store,
+  Radio,
+  Orbit,
+  Bell,
+  Zap,
 } from "lucide-react";
+import {
+  AlertSubscriptions,
+  getAlertCount,
+} from "@/components/AlertSubscriptions";
 
 interface NavItem {
   path: string;
@@ -14,12 +28,33 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { path: "/", label: "Portfolio", icon: BarChart3, group: "operations", exact: true },
-  { path: "/monitoring", label: "Monitoring", icon: Radio, group: "operations" },
-  { path: "/satellites", label: "Satellites", icon: Orbit, group: "operations" },
+  {
+    path: "/",
+    label: "Portfolio",
+    icon: BarChart3,
+    group: "operations",
+    exact: true,
+  },
+  {
+    path: "/monitoring",
+    label: "Monitoring",
+    icon: Radio,
+    group: "operations",
+  },
+  {
+    path: "/satellites",
+    label: "Satellites",
+    icon: Orbit,
+    group: "operations",
+  },
   { path: "/workflows", label: "Workflows", icon: GitBranch, group: "tools" },
   { path: "/roi", label: "ROI", icon: Calculator, group: "tools" },
-  { path: "/scenarios", label: "Scenarios", icon: FlaskConical, group: "tools" },
+  {
+    path: "/scenarios",
+    label: "Scenarios",
+    icon: FlaskConical,
+    group: "tools",
+  },
   { path: "/marketplace", label: "Marketplace", icon: Store, group: "tools" },
   { path: "/community", label: "Community", icon: Users, group: "tools" },
 ];
@@ -27,12 +62,20 @@ const navItems: NavItem[] = [
 const AppLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [alertsOpen, setAlertsOpen] = useState(false);
+  const [alertCount, setAlertCount] = useState(getAlertCount);
 
   const isActive = (item: NavItem) =>
-    item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path);
+    item.exact
+      ? location.pathname === item.path
+      : location.pathname.startsWith(item.path);
 
   const operations = navItems.filter((n) => n.group === "operations");
   const tools = navItems.filter((n) => n.group === "tools");
+
+  const handleAlertCountChange = useCallback((count: number) => {
+    setAlertCount(count);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -41,7 +84,9 @@ const AppLayout: React.FC = () => {
         <div className="flex items-center gap-2 mr-6">
           <Satellite className="w-4 h-4" />
           <span className="font-semibold text-sm tracking-tight">JonaAI</span>
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1">Geospatial Intelligence</span>
+          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground ml-1">
+            Geospatial Intelligence
+          </span>
         </div>
 
         {/* Operations group */}
@@ -54,7 +99,9 @@ const AppLayout: React.FC = () => {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 className={`px-2.5 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1.5 ${
-                  active ? "bg-primary text-primary-foreground" : "hover:bg-accent text-muted-foreground"
+                  active
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-accent text-muted-foreground"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -76,7 +123,9 @@ const AppLayout: React.FC = () => {
                 key={item.path}
                 onClick={() => navigate(item.path)}
                 className={`px-2.5 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1.5 ${
-                  active ? "bg-primary text-primary-foreground" : "hover:bg-accent text-muted-foreground"
+                  active
+                    ? "bg-primary text-primary-foreground"
+                    : "hover:bg-accent text-muted-foreground"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -100,10 +149,39 @@ const AppLayout: React.FC = () => {
         )}
 
         <div className="ml-auto flex items-center gap-3">
-          <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-            Last sync: 12 min ago
-          </span>
-          <div className="w-2 h-2 rounded-full bg-status-good" />
+          {/* LIVE indicator */}
+          <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground">
+            <span className="w-1.5 h-1.5 rounded-full bg-status-good animate-pulse inline-block" />
+            <span className="uppercase tracking-wider">LIVE</span>
+            <span className="text-border">|</span>
+            <span>Last sync 12m ago</span>
+          </div>
+
+          {/* Workflow Run shortcut */}
+          <button
+            onClick={() => navigate("/workflows")}
+            className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5 font-mono text-[10px] border border-border px-2.5 py-1 hover:border-primary"
+            title="Workflow Builder"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline uppercase tracking-wider">
+              Run
+            </span>
+          </button>
+
+          {/* Alert Bell */}
+          <button
+            onClick={() => setAlertsOpen(true)}
+            className="relative hover:bg-accent p-1.5 rounded-sm transition-colors"
+            title="Alert Subscriptions"
+          >
+            <Bell className="w-4 h-4 text-muted-foreground" />
+            {alertCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-status-critical text-white text-[9px] font-mono font-medium rounded-full flex items-center justify-center">
+                {alertCount}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
@@ -111,6 +189,13 @@ const AppLayout: React.FC = () => {
       <div className="flex-1 overflow-hidden">
         <Outlet />
       </div>
+
+      {/* Alert Subscriptions Modal */}
+      <AlertSubscriptions
+        open={alertsOpen}
+        onOpenChange={setAlertsOpen}
+        onCountChange={handleAlertCountChange}
+      />
     </div>
   );
 };

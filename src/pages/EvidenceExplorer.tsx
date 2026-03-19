@@ -1,26 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { assets } from "@/lib/mock-data";
-import { ArrowLeft, Crosshair } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { EvidenceMap } from "@/components/EvidenceMap";
 
 const layers = ["True Color", "NDVI", "Moisture Index", "Thermal"] as const;
 type Layer = (typeof layers)[number];
 
-const layerColors: Record<Layer, string> = {
-  "True Color": "hsl(var(--status-good))",
-  NDVI: "hsl(var(--status-good))",
-  "Moisture Index": "hsl(210 80% 50%)",
-  Thermal: "hsl(0 80% 55%)",
+const layerToMapLayer: Record<
+  Layer,
+  "truecolor" | "ndvi" | "moisture" | "thermal"
+> = {
+  "True Color": "truecolor",
+  NDVI: "ndvi",
+  "Moisture Index": "moisture",
+  Thermal: "thermal",
 };
+
+const SLIDER_DATES = [
+  "Jan 15, 2024",
+  "Feb 1, 2024",
+  "Feb 15, 2024",
+  "Mar 1, 2024",
+  "Mar 15, 2024",
+  "Apr 1, 2024",
+  "Apr 15, 2024",
+  "May 1, 2024",
+  "May 15, 2024",
+  "Jun 1, 2024",
+  "Jun 15, 2024",
+  "Jul 1, 2024",
+];
 
 const EvidenceExplorer: React.FC = () => {
   const { assetId } = useParams<{ assetId: string }>();
   const navigate = useNavigate();
   const [activeLayer, setActiveLayer] = useState<Layer>("NDVI");
-  const [timelineValue, setTimelineValue] = useState(85);
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
+  const [timelineValue, setTimelineValue] = useState(11);
+  const [pixelData, setPixelData] = useState<{
+    lat: number;
+    lng: number;
+    ndvi: number;
+    moisture: number;
+  } | null>(null);
+  const [panelCollapsed, setPanelCollapsed] = useState(false);
 
-  const demoAsset: typeof assets[0] = {
+  const demoAsset: (typeof assets)[0] = {
     id: "demo",
     name: "Cascadia Demonstration Farm",
     region: "Pacific Northwest",
@@ -29,139 +54,186 @@ const EvidenceExplorer: React.FC = () => {
     healthScore: 64,
     status: "watch",
     pendingActions: 4,
-    trend: [78, 77, 75, 74, 72, 71, 70, 69, 68, 67, 66, 66, 65, 65, 64, 64, 64, 63, 63, 64, 64, 65, 64, 64, 64, 64, 63, 64, 64, 64],
+    trend: [
+      78, 77, 75, 74, 72, 71, 70, 69, 68, 67, 66, 66, 65, 65, 64, 64, 64, 63,
+      63, 64, 64, 65, 64, 64, 64, 64, 63, 64, 64, 64,
+    ],
     yoyChange: -5.3,
   };
 
   const asset = assets.find((a) => a.id === assetId) || demoAsset;
 
-  const timelineDate = new Date(2023, 6, 1);
-  timelineDate.setDate(timelineDate.getDate() + Math.floor((timelineValue / 100) * 120));
+  const handleMouseMove = useCallback(
+    (lat: number, lng: number, ndvi: number, moisture: number) => {
+      setPixelData({ lat, lng, ndvi, moisture });
+    },
+    [],
+  );
 
   return (
     <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="border-b border-border px-6 py-3 flex items-center gap-4 bg-background z-10">
-        <button onClick={() => navigate(`/asset/${asset.id}`)} className="hover:bg-accent p-1.5 rounded-sm transition-colors">
+        <button
+          onClick={() => navigate(`/asset/${asset.id}`)}
+          className="hover:bg-accent p-1.5 rounded-sm transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
           <h1 className="text-sm font-semibold">{asset.name}</h1>
-          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">Evidence Explorer</span>
+          <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+            Evidence Explorer
+          </span>
         </div>
       </div>
 
       {/* Map Area */}
-      <div
-        className="flex-1 relative bg-muted/20 overflow-hidden"
-        onMouseMove={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          setCursorPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        }}
-        onMouseLeave={() => setCursorPos(null)}
-      >
-        {/* Grid */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
-            linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px)
-          `,
-          backgroundSize: "80px 80px",
-        }} />
-
-        {/* Simulated field zones with layer-specific colors */}
-        <div
-          className="absolute top-[10%] left-[5%] w-[40%] h-[50%] border transition-colors duration-300"
-          style={{
-            backgroundColor: `${layerColors[activeLayer]}20`,
-            borderColor: `${layerColors[activeLayer]}60`,
-          }}
+      <div className="flex-1 relative overflow-hidden">
+        <EvidenceMap
+          activeLayer={layerToMapLayer[activeLayer]}
+          onMouseMove={handleMouseMove}
         />
+
+        {/* Technical Panel (matches JonaAI-Intel) */}
         <div
-          className="absolute top-[8%] right-[25%] w-[30%] h-[55%] border transition-colors duration-300"
-          style={{
-            backgroundColor: `hsl(var(--status-critical) / 0.15)`,
-            borderColor: `hsl(var(--status-critical) / 0.4)`,
-          }}
+          className="absolute top-4 right-4 w-80 bg-background border border-border z-[1001] max-h-[calc(100%-6rem)] overflow-auto"
+          style={{ boxShadow: "2px 2px 0 rgba(0,0,0,0.06)" }}
         >
-          <span className="absolute top-2 left-2 font-mono text-[10px] uppercase text-status-critical">Anomaly Zone</span>
-        </div>
-        <div
-          className="absolute bottom-[20%] left-[15%] w-[55%] h-[20%] border transition-colors duration-300"
-          style={{
-            backgroundColor: `${layerColors[activeLayer]}10`,
-            borderColor: `${layerColors[activeLayer]}30`,
-          }}
-        />
+          {/* Panel header */}
+          <div className="flex justify-between items-center px-4 py-3 border-b border-border bg-card">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              Technical Panel
+            </span>
+            <button
+              onClick={() => setPanelCollapsed(!panelCollapsed)}
+              className="font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
+            >
+              {panelCollapsed ? "Expand" : "Collapse"}
+            </button>
+          </div>
 
-        {/* Pixel Inspector */}
-        {cursorPos && (
-          <div
-            className="absolute pointer-events-none z-20"
-            style={{ left: cursorPos.x + 16, top: cursorPos.y + 16 }}
-          >
-            <div className="bg-background border border-border px-3 py-2 shadow-sm">
-              <div className="flex items-center gap-2 mb-1">
-                <Crosshair className="w-3 h-3 text-muted-foreground" />
-                <span className="font-mono text-[10px] text-muted-foreground uppercase">Pixel Inspector</span>
+          {!panelCollapsed && (
+            <div className="p-4 space-y-5">
+              {/* Layer Controls */}
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium block mb-2">
+                  Layer
+                </span>
+                <div className="space-y-1.5">
+                  {layers.map((layer) => (
+                    <label
+                      key={layer}
+                      className="flex items-center gap-2 text-sm cursor-pointer hover:text-foreground transition-colors"
+                    >
+                      <input
+                        type="radio"
+                        name="layer"
+                        checked={activeLayer === layer}
+                        onChange={() => setActiveLayer(layer)}
+                        className="accent-primary"
+                      />
+                      {layer}
+                    </label>
+                  ))}
+                </div>
               </div>
-              <div className="font-mono text-[11px] space-y-0.5">
-                <div>Lat: {(34.05 + (cursorPos.y / 1000)).toFixed(4)}</div>
-                <div>Lng: {(-118.24 + (cursorPos.x / 1000)).toFixed(4)}</div>
-                <div>{activeLayer}: {(0.2 + Math.random() * 0.6).toFixed(2)}</div>
+
+              {/* Cursor Values */}
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium block mb-2">
+                  Cursor Values
+                </span>
+                <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-mono text-sm">
+                  <span className="text-muted-foreground">Lat</span>
+                  <span className="text-right">
+                    {pixelData ? pixelData.lat.toFixed(4) : "—"}
+                  </span>
+                  <span className="text-muted-foreground">Lng</span>
+                  <span className="text-right">
+                    {pixelData ? pixelData.lng.toFixed(4) : "—"}
+                  </span>
+                  <span className="text-muted-foreground">NDVI</span>
+                  <span className="text-right">
+                    {pixelData ? pixelData.ndvi.toFixed(2) : "—"}
+                  </span>
+                  <span className="text-muted-foreground">Moisture</span>
+                  <span className="text-right">
+                    {pixelData ? `${pixelData.moisture.toFixed(0)}%` : "—"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Active Asset Context */}
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium block mb-2">
+                  Active Asset
+                </span>
+                <div className="text-sm font-medium">{asset.name}</div>
+                <div className="text-xs text-muted-foreground mt-0.5">
+                  {asset.sizeHA.toLocaleString()} HA &middot; {asset.crop}{" "}
+                  &middot; {asset.region}
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <span
+                    className={`font-mono text-[10px] uppercase px-1.5 py-0.5 text-primary-foreground ${
+                      asset.healthScore < 50
+                        ? "bg-status-critical"
+                        : asset.healthScore < 70
+                          ? "bg-status-warn"
+                          : "bg-status-good"
+                    }`}
+                  >
+                    {asset.status === "critical" || asset.status === "at-risk"
+                      ? "Critical"
+                      : asset.status === "watch"
+                        ? "Warning"
+                        : "Healthy"}
+                  </span>
+                  <span className="font-mono text-xs text-muted-foreground">
+                    Health: {asset.healthScore}
+                  </span>
+                </div>
+              </div>
+
+              {/* Satellite Pass Metadata */}
+              <div>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium block mb-2">
+                  Satellite Pass
+                </span>
+                <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-mono text-sm">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="text-right">
+                    {SLIDER_DATES[timelineValue]}
+                  </span>
+                  <span className="text-muted-foreground">Source</span>
+                  <span className="text-right">Sentinel-2</span>
+                  <span className="text-muted-foreground">Cloud</span>
+                  <span className="text-right">4%</span>
+                  <span className="text-muted-foreground">Res</span>
+                  <span className="text-right">10m</span>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* Floating Panel */}
-        <div className="absolute top-4 right-4 w-72 bg-background border border-border z-10">
-          <div className="p-4 border-b border-border">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">Layer Controls</span>
-          </div>
-          <div className="p-4 space-y-2">
-            {layers.map((layer) => (
-              <label
-                key={layer}
-                className={`flex items-center gap-3 px-3 py-2 rounded-sm cursor-pointer transition-colors ${
-                  activeLayer === layer ? "bg-primary text-primary-foreground" : "hover:bg-accent"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="layer"
-                  checked={activeLayer === layer}
-                  onChange={() => setActiveLayer(layer)}
-                  className="sr-only"
-                />
-                <div
-                  className="w-3 h-3 border rounded-full flex items-center justify-center"
-                  style={{
-                    borderColor: activeLayer === layer ? "currentColor" : "hsl(var(--border))",
-                  }}
-                >
-                  {activeLayer === layer && <div className="w-1.5 h-1.5 bg-current rounded-full" />}
-                </div>
-                <span className="text-sm">{layer}</span>
-              </label>
-            ))}
-          </div>
+          )}
         </div>
       </div>
 
       {/* Timeline Slider */}
       <div className="border-t border-border px-6 py-3 bg-background flex items-center gap-4">
-        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground w-20">Timeline</span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground w-20">
+          Timeline
+        </span>
         <input
           type="range"
           min="0"
-          max="100"
+          max="11"
           value={timelineValue}
           onChange={(e) => setTimelineValue(parseInt(e.target.value))}
           className="flex-1 h-0.5 bg-border appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:cursor-pointer"
         />
         <span className="font-mono text-xs text-muted-foreground w-28 text-right">
-          {timelineDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+          {SLIDER_DATES[timelineValue]}
         </span>
       </div>
     </div>
