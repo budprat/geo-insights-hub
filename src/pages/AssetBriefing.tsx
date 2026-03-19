@@ -189,6 +189,29 @@ const AssetBriefing: React.FC = () => {
             </div>
           </div>
 
+          {/* Yield Impact + Simulate ROI */}
+          <div className="border border-border p-4 mb-8 bg-card">
+            <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              Est. Yield Impact
+            </span>
+            <div
+              className={`font-mono text-2xl font-medium tracking-tight mt-1 ${asset.healthScore <= 70 ? "text-status-critical" : "text-muted-foreground"}`}
+            >
+              {asset.healthScore <= 70
+                ? `-$${((100 - asset.healthScore) * 600).toLocaleString()}`
+                : "$0"}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              At current trajectory, Q4 harvest
+            </div>
+            <button
+              onClick={() => navigate("/roi")}
+              className="mt-3 border border-border font-mono text-[10px] uppercase tracking-wider text-muted-foreground px-3 py-1.5 hover:text-foreground hover:border-primary transition-colors w-full text-center"
+            >
+              Simulate ROI
+            </button>
+          </div>
+
           {/* Findings */}
           <div>
             <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
