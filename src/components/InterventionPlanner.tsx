@@ -77,9 +77,9 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
       />
 
       {/* Modal */}
-      <div className="relative bg-background border border-border w-full max-w-[600px] z-10">
+      <div className="relative bg-background border border-border w-full max-w-[600px] z-10 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex justify-between items-center px-6 py-4 border-b border-border">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-border flex-shrink-0">
           <h2 id="intervention-title" className="text-xl font-semibold">
             Deploy Intervention
           </h2>
@@ -93,7 +93,23 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
         </div>
 
         {/* Body */}
-        <div className="p-6" style={{ overscrollBehavior: "contain" }}>
+        <div
+          className="p-6 overflow-y-auto"
+          style={{ overscrollBehavior: "contain" }}
+        >
+          {/* Risk Forecast */}
+          <div className="flex items-center justify-between p-3 bg-status-critical/5 border border-status-critical/20 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-status-critical animate-pulse" />
+              <span className="font-mono text-[10px] uppercase tracking-wider font-bold text-status-critical">
+                Critical Fault Detected
+              </span>
+            </div>
+            <span className="font-mono text-[10px] font-bold text-status-critical">
+              Risk: 88%
+            </span>
+          </div>
+
           {/* Intervention Summary */}
           <div className="bg-card border border-border p-4 mb-6">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
@@ -110,6 +126,48 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
               <span className={`font-mono text-sm ${priorityColor}`}>
                 {priorityLabel}
               </span>
+            </div>
+          </div>
+
+          {/* Financial Recovery Preview */}
+          <div className="bg-primary text-primary-foreground p-4 mb-6">
+            <span className="font-mono text-[9px] uppercase tracking-wider opacity-60 block mb-3">
+              Financial Recovery
+            </span>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <span className="font-mono text-[9px] uppercase opacity-50">
+                  Projected ROI
+                </span>
+                <div className="font-mono text-lg font-bold text-status-good mt-1">
+                  +
+                  {Math.round(
+                    ((action.estimatedCost * 4.12 - action.estimatedCost) /
+                      action.estimatedCost) *
+                      100,
+                  )}
+                  %
+                </div>
+              </div>
+              <div>
+                <span className="font-mono text-[9px] uppercase opacity-50">
+                  Avoided Loss
+                </span>
+                <div className="font-mono text-lg font-bold mt-1">
+                  $
+                  {(action.estimatedCost * 4.12).toLocaleString(undefined, {
+                    maximumFractionDigits: 0,
+                  })}
+                </div>
+              </div>
+              <div>
+                <span className="font-mono text-[9px] uppercase opacity-50">
+                  Cost
+                </span>
+                <div className="font-mono text-lg font-bold text-status-critical mt-1">
+                  ${action.estimatedCost.toLocaleString()}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -201,35 +259,104 @@ export const InterventionPlanner: React.FC<InterventionPlannerProps> = ({
                 className="w-full border border-border px-3 py-2 text-sm bg-background rounded-sm focus:outline-none focus:ring-1 focus:ring-ring resize-none"
               />
             </div>
+
+            {/* Logistic Readiness */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+                  Logistic Readiness
+                </label>
+                <span className="font-mono text-[10px] text-status-good font-bold">
+                  Optimized
+                </span>
+              </div>
+              <div className="w-full bg-muted h-1.5">
+                <div
+                  className="bg-status-good h-1.5 transition-all duration-500"
+                  style={{ width: "92%" }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Executive Protocol Notice */}
+          <div className="border border-dashed border-border p-3 mt-4 flex items-start gap-3">
+            <svg
+              className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              />
+            </svg>
+            <div>
+              <p className="text-xs font-bold">Executive Protocol Required</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                Deploying this intervention requires Level 4 authorization
+                signature.
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 pb-6">
-          <Button
-            variant="action"
-            className="w-full h-12"
-            onClick={handleDeploy}
-            disabled={!canSubmit}
-          >
-            {deploying ? (
-              <>
-                <Loader2
-                  className="w-4 h-4 animate-spin mr-2"
-                  aria-hidden="true"
-                />
-                Deploying...
-              </>
-            ) : (
-              "Deploy Intervention"
-            )}
-          </Button>
+        <div className="px-6 pb-6 flex-shrink-0">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="h-12 flex-1"
+              onClick={() => {
+                toast.info("Team notification sent.");
+              }}
+            >
+              Notify Team
+            </Button>
+            <Button
+              variant="action"
+              className="h-12 flex-[2]"
+              onClick={handleDeploy}
+              disabled={!canSubmit}
+            >
+              {deploying ? (
+                <>
+                  <Loader2
+                    className="w-4 h-4 animate-spin mr-2"
+                    aria-hidden="true"
+                  />
+                  Deploying...
+                </>
+              ) : (
+                "Deploy Intervention"
+              )}
+            </Button>
+          </div>
           <button
             onClick={onClose}
             className="w-full mt-2 text-muted-foreground text-sm py-2 hover:text-foreground transition-colors"
           >
             Cancel
           </button>
+
+          {/* Footer Status */}
+          <div className="mt-4 pt-3 border-t border-border flex items-center justify-between font-mono text-[9px] text-muted-foreground">
+            <div className="flex gap-4">
+              <span className="uppercase tracking-wider">
+                Est. completion: 14 days
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-status-good" />
+                <span className="uppercase tracking-wider">
+                  Satellite Sync: Live
+                </span>
+              </span>
+            </div>
+            <span className="uppercase tracking-wider">Asset: {assetName}</span>
+          </div>
         </div>
       </div>
     </div>
