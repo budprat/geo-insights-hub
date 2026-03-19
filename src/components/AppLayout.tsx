@@ -144,17 +144,36 @@ const AppLayout: React.FC = () => {
           })}
         </nav>
 
-        {/* Breadcrumb for detail pages */}
-        {location.pathname.startsWith("/asset") && (
-          <span className="ml-2 px-2.5 py-1.5 text-xs bg-accent rounded-sm flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5" aria-hidden="true" />
-            Asset Briefing
-          </span>
-        )}
-        {location.pathname.startsWith("/evidence") && (
-          <span className="ml-2 px-2.5 py-1.5 text-xs bg-accent rounded-sm">
-            Evidence Explorer
-          </span>
+        {/* Breadcrumb for detail pages — clickable */}
+        {(location.pathname.startsWith("/asset") ||
+          location.pathname.startsWith("/evidence")) && (
+          <div className="flex items-center gap-0.5 ml-2">
+            <button
+              onClick={() =>
+                navigate(`/asset/${location.pathname.split("/").pop()}`)
+              }
+              className={`px-2 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1 ${
+                location.pathname.startsWith("/asset")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-accent text-muted-foreground"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" aria-hidden="true" />
+              Briefing
+            </button>
+            <button
+              onClick={() =>
+                navigate(`/evidence/${location.pathname.split("/").pop()}`)
+              }
+              className={`px-2 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-1 ${
+                location.pathname.startsWith("/evidence")
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-accent text-muted-foreground"
+              }`}
+            >
+              Evidence
+            </button>
+          </div>
         )}
 
         <div className="ml-auto flex items-center gap-3">
